@@ -37,6 +37,7 @@ struct Info
 	double ** matrix;
 	double ** matrix_old;
 	int num_threads;
+	int t_id;
 };
 
 int main(int argc, char **argv) {
@@ -96,7 +97,7 @@ int main(int argc, char **argv) {
 		// Matrix initialisieren
 		init_matrix(m1, n, a, b, r, H);
 
-		ergebniszeile_eintragen(m1, n, ergebnisdatei);  // Initiale Matrix in Datei schreiben
+		//ergebniszeile_eintragen(m1, n, ergebnisdatei);  // Initiale Matrix in Datei schreiben
 
 		// Threads erzeugen
 		pthread_t pThreads [num_threads];
@@ -119,11 +120,18 @@ int main(int argc, char **argv) {
 
 				for(int i = 0; i < num_threads; ++i)
 				{
-					Info* info = new Info{n, phi, m1, m1old, num_threads};
+					//cout << "Arbeitszuweisung an Threads" << endl;
+					Info* info = new Info{n, phi, m1, m1old, num_threads, i+1};
 					pthread_create(&pThreads[i], NULL, &calculate_slice, (void*) info);
 				}
 
-			ergebniszeile_eintragen(m1, n, ergebnisdatei);
+				// Wait for threads to finish
+				for(int i = 0; i < num_threads; ++i)
+				{
+					pthread_join(pThreads[i], NULL);
+				}
+
+			//ergebniszeile_eintragen(m1, n, ergebnisdatei);
 		}
 
 		// Zeit stoppen
@@ -174,9 +182,9 @@ void* calculate_slice(void* inf){
 	double ** matrix = info->matrix;
 	double ** matrix_old = info->matrix_old;
 	int num_threads = info->num_threads;
+	int thread_id = info->t_id;
 
 	int intervall = n/num_threads;
-	int thread_id = pthread_self();
 	int i_end = thread_id * intervall;
 	int i_start = i_end - intervall;
 
@@ -185,6 +193,8 @@ void* calculate_slice(void* inf){
 
 	if (i_end >= n)
 		i_end = n-1; // Randwert bei i=n nicht ändern
+
+	//cout << "Thread ID: " << thread_id << endl;
 
 	// Werte des aktuellen Zeitschritts berechnen
 	for (int i=i_start; i<i_end; i++)
