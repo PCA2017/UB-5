@@ -4,28 +4,15 @@
 
 #SBATCH --time=5
 #SBATCH --job-name=heated_plate_pra01
-#SBATCH --output=heated_plate_out
+#SBATCH --output=heated_plate_pthreads_out
 
-g++ -Wall -std=c++11 -o heated_plate ../src/heated_plate.cpp
-#                   n   r  H
-srun ./heated_plate 100 40 100.0
-srun ./heated_plate 500 200 100.0
-srun ./heated_plate 1000 400 100.0
+g++ -Wall -O3 -std=c++11 -o heated_plate ../src/heated_plate_pthreads.cpp
+srun ./heated_plate 1024 128 40.0 1 file_1
+srun ./heated_plate 1024 128 40.0 2 file_1
+srun ./heated_plate 1024 128 40.0 4 file_1
+srun ./heated_plate 1024 128 40.0 8 file_1
+srun ./heated_plate 1024 128 40.0 16 file_1
+srun ./heated_plate 1024 128 40.0 32 file_1
 
-
-g++ -Wall -O1 -std=c++11 -o heated_plate ../src/heated_plate.cpp
-srun ./heated_plate 100 40 100.0
-srun ./heated_plate 500 200 100.0
-srun ./heated_plate 1000 400 100.0
-
-g++ -Wall -O2 -std=c++11 -o heated_plate ../src/heated_plate.cpp
-srun ./heated_plate 100 40 100.0
-srun ./heated_plate 500 200 100.0
-srun ./heated_plate 1000 400 100.0
-
-g++ -Wall -O3 -std=c++11 -o heated_plate ../src/heated_plate.cpp
-srun ./heated_plate 100 40 100.0
-srun ./heated_plate 500 200 100.0
-srun ./heated_plate 1000 400 100.0
 
 
