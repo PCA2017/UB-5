@@ -6,7 +6,7 @@
 #SBATCH --job-name=heated_plate_pra01
 #SBATCH --output=heated_plate_pthreads_out
 
-g++ -Wall -O3 -std=c++11 -o heated_plate ../src/heated_plate_pthreads.cpp
+g++ -Wall -O3 -std=c++11 -lpthread -o heated_plate ../src/heated_plate_pthreads.cpp
 srun ./heated_plate 1024 128 40.0 1 file_1
 srun ./heated_plate 1024 128 40.0 2 file_1
 srun ./heated_plate 1024 128 40.0 4 file_1
